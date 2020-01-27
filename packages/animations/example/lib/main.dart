@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 <<<<<<< HEAD
 import 'container_transition.dart';
@@ -29,36 +30,49 @@ void main() {
   );
 }
 
-class _TransitionsHomePage extends StatelessWidget {
+class _TransitionsHomePage extends StatefulWidget {
+  @override
+  _TransitionsHomePageState createState() => _TransitionsHomePageState();
+}
+
+class _TransitionsHomePageState extends State<_TransitionsHomePage> {
+  bool _slowAnimations = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Material Transitions')),
       body: Column(
         children: <Widget>[
-          _TransitionListTile(
-            title: 'Shared Axis',
-            subtitle: 'Page transition where outgoing and incoming '
-                'elements share a fade transition',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return SharedAxisTransitionDemo();
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                _TransitionListTile(
+                  title: 'Shared Axis',
+                  subtitle: 'Page transition where outgoing and incoming '
+                      'elements share a fade transition',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return SharedAxisTransitionDemo();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          _TransitionListTile(
-            title: 'Fade Through',
-            subtitle: 'Page transition outgoing elements first fade '
-                'out and then incoming elements fade in while scaling',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return FadeThroughTransitionDemo();
+                _TransitionListTile(
+                  title: 'Fade Through',
+                  subtitle: 'Page transition outgoing elements first fade '
+                      'out and then incoming elements fade in while scaling',
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return FadeThroughTransitionDemo();
+                        },
+                      ),
+                    );
                   },
                 ),
               );
@@ -92,8 +106,24 @@ class _TransitionsHomePage extends StatelessWidget {
                     return FadeScaleTransitionDemo();
                   },
                 ),
-              );
+              ],
+            ),
+          ),
+          const Divider(height: 0.0),
+          SwitchListTile(
+            value: _slowAnimations,
+            onChanged: (bool value) async {
+              setState(() {
+                _slowAnimations = value;
+              });
+              // Wait until the Switch is done animating before actually slowing
+              // down time.
+              if (_slowAnimations) {
+                await Future<void>.delayed(const Duration(milliseconds: 300));
+              }
+              timeDilation = _slowAnimations ? 20.0 : 1.0;
             },
+            title: const Text('Slow animations'),
           ),
         ],
       ),

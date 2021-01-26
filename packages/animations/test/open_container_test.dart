@@ -1729,7 +1729,7 @@ void main() {
       // equal to the RouteSettings passed to the OpenContainer
       final ModalRoute<dynamic> modalRoute = ModalRoute.of(
         tester.element(find.text('Open')),
-      );
+      )!;
       expect(modalRoute.settings, routeSettings);
     },
   );

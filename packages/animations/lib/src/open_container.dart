@@ -98,18 +98,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
     this.transitionType = ContainerTransitionType.fade,
     this.useRootNavigator = false,
     this.routeSettings,
-  })  : assert(closedColor != null),
-        assert(openColor != null),
-        assert(closedElevation != null),
-        assert(openElevation != null),
-        assert(closedShape != null),
-        assert(openShape != null),
-        assert(closedBuilder != null),
-        assert(openBuilder != null),
-        assert(tappable != null),
-        assert(transitionType != null),
-        assert(useRootNavigator != null),
-        super(key: key);
+  })  : super(key: key);
 
   /// Background color of the container while it is closed.
   ///
@@ -259,7 +248,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   final bool useRootNavigator;
 
   /// Provides additional data to the [openBuilder] route pushed by the Navigator.
-  final RouteSettings routeSettings;
+  final RouteSettings? routeSettings;
 
   @override
   _OpenContainerState<T> createState() => _OpenContainerState<T>();
@@ -413,19 +402,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required this.transitionDuration,
     required this.transitionType,
     required this.useRootNavigator,
-    required RouteSettings routeSettings,
-  })  : assert(closedColor != null),
-        assert(openColor != null),
-        assert(closedElevation != null),
-        assert(openElevation != null),
-        assert(closedShape != null),
-        assert(openBuilder != null),
-        assert(closedBuilder != null),
-        assert(hideableKey != null),
-        assert(closedBuilderKey != null),
-        assert(transitionType != null),
-        assert(useRootNavigator != null),
-        _elevationTween = Tween<double>(
+    required RouteSettings? routeSettings,
+  })  : _elevationTween = Tween<double>(
           begin: closedElevation,
           end: openElevation,
         ),
@@ -637,18 +615,18 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   @override
   void dispose() {
-    if (hideableKey?.currentState?.isVisible == false) {
+    if (hideableKey.currentState?.isVisible == false) {
       // This route may be disposed without dismissing its animation if it is
       // removed by the navigator.
-      SchedulerBinding.instance
+      SchedulerBinding.instance!
           .addPostFrameCallback((Duration d) => _toggleHideable(hide: false));
     }
     super.dispose();
   }
 
-  void _toggleHideable({bool hide}) {
-    if (hideableKey?.currentState != null) {
-      hideableKey.currentState
+  void _toggleHideable({required bool hide}) {
+    if (hideableKey.currentState != null) {
+      hideableKey.currentState!
         ..placeholderSize = null
         ..isVisible = !hide;
     }
